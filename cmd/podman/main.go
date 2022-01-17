@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	_ "github.com/containers/podman/v4/cmd/podman/completion"
+	_ "github.com/containers/podman/v4/cmd/podman/configmaps"
 	_ "github.com/containers/podman/v4/cmd/podman/containers"
 	_ "github.com/containers/podman/v4/cmd/podman/generate"
 	_ "github.com/containers/podman/v4/cmd/podman/healthcheck"

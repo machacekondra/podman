@@ -16,6 +16,10 @@ type ContainerCopyFunc func() error
 type ContainerEngine interface {
 	AutoUpdate(ctx context.Context, options AutoUpdateOptions) ([]*AutoUpdateReport, []error)
 	Config(ctx context.Context) (*config.Config, error)
+	ConfigMapCreate(ctx context.Context, name string, reader io.Reader, options ConfigMapCreateOptions) (*ConfigMapCreateReport, error)
+	ConfigMapInspect(ctx context.Context, nameOrIDs []string) ([]*ConfigMapInfoReport, []error, error)
+	ConfigMapList(ctx context.Context, opts ConfigMapListRequest) ([]*ConfigMapInfoReport, error)
+	ConfigMapRm(ctx context.Context, nameOrID []string, opts ConfigMapRmOptions) ([]*ConfigMapRmReport, error)
 	ContainerAttach(ctx context.Context, nameOrID string, options AttachOptions) error
 	ContainerCheckpoint(ctx context.Context, namesOrIds []string, options CheckpointOptions) ([]*CheckpointReport, error)
 	ContainerCleanup(ctx context.Context, namesOrIds []string, options ContainerCleanupOptions) ([]*ContainerCleanupReport, error)

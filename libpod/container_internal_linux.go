@@ -1958,6 +1958,17 @@ rootless=%d
 		}
 	}
 
+	if len(c.ConfigMaps()) > 0 {
+		for _, cm := range c.ConfigMaps() {
+			cmFileName := cm.Name
+			if cm.Target != "" {
+				cmFileName = cm.Target
+			}
+			src := filepath.Join(c.config.ConfigMapsPath, cm.Name)
+			c.state.BindMounts[cmFileName] = src
+		}
+	}
+
 	return nil
 }
 

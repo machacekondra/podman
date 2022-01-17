@@ -83,11 +83,6 @@ func importBuilderDataFromImage(ctx context.Context, store storage.Store, system
 		return nil, err
 	}
 
-	netInt, err := getNetworkInterface(store, "", "")
-	if err != nil {
-		return nil, err
-	}
-
 	builder := &Builder{
 		store:            store,
 		Type:             containerType,
@@ -105,7 +100,6 @@ func importBuilderDataFromImage(ctx context.Context, store storage.Store, system
 			UIDMap:         uidmap,
 			GIDMap:         gidmap,
 		},
-		NetworkInterface: netInt,
 	}
 
 	if err := builder.initConfig(ctx, image, systemContext); err != nil {

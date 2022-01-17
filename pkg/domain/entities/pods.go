@@ -232,6 +232,7 @@ type ContainerCreateOptions struct {
 	Rm                bool
 	RootFS            bool
 	Secrets           []string
+	ConfigMaps        []string
 	SecurityOpt       []string `json:"security_opt,omitempty"`
 	SdNotifyMode      string
 	ShmSize           string

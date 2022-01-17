@@ -301,6 +301,9 @@ type ContainerStorageConfig struct {
 	// Volatile specifies whether the container storage can be optimized
 	// at the cost of not syncing all the dirty files in memory.
 	Volatile bool `json:"volatile,omitempty"`
+	// ConfigMaps are the configmaps that will be added to the container
+	// Optional.
+	ConfigMaps []ConfigMap `json:"configmaps,omitempty"`
 }
 
 // ContainerSecurityConfig is a container's security features, including
@@ -543,6 +546,14 @@ func (s *SpecGenerator) GetImage() (*libimage.Image, string) {
 }
 
 type Secret struct {
+	Source string
+	Target string
+	UID    uint32
+	GID    uint32
+	Mode   uint32
+}
+
+type ConfigMap struct {
 	Source string
 	Target string
 	UID    uint32

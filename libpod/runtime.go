@@ -23,6 +23,7 @@ import (
 	nettypes "github.com/containers/common/libnetwork/types"
 	"github.com/containers/common/pkg/cgroups"
 	"github.com/containers/common/pkg/config"
+	"github.com/containers/common/pkg/configmaps"
 	"github.com/containers/common/pkg/secrets"
 	"github.com/containers/image/v5/pkg/sysregistriesv2"
 	is "github.com/containers/image/v5/storage"
@@ -118,6 +119,8 @@ type Runtime struct {
 	noStore bool
 	// secretsManager manages secrets
 	secretsManager *secrets.SecretsManager
+	// configmapsManager manages configmaps
+	configmapsManager *configmaps.ConfigMapManager
 }
 
 // SetXdgDirs ensures the XDG_RUNTIME_DIR env and XDG_CONFIG_HOME variables are set.
@@ -1152,6 +1155,11 @@ func (r *Runtime) GetSecretsStorageDir() string {
 	return filepath.Join(r.store.GraphRoot(), "secrets")
 }
 
+// GetConfigMapsStorageDir returns the directory that the configmap manager should take
+func (r *Runtime) GetConfigMapsStorageDir() string {
+	return filepath.Join(r.store.GraphRoot(), "configmaps")
+}
+
 // SecretsManager returns the directory that the secrets manager should take
 func (r *Runtime) SecretsManager() (*secrets.SecretsManager, error) {
 	if r.secretsManager == nil {
@@ -1162,6 +1170,18 @@ func (r *Runtime) SecretsManager() (*secrets.SecretsManager, error) {
 		r.secretsManager = manager
 	}
 	return r.secretsManager, nil
+}
+
+// ConfigMapsManager returns the directory that the secrets manager should take
+func (r *Runtime) ConfigMapsManager() (*configmaps.ConfigMapManager, error) {
+	if r.configmapsManager == nil {
+		manager, err := configmaps.NewManager(r.GetConfigMapsStorageDir())
+		if err != nil {
+			return nil, err
+		}
+		r.configmapsManager = manager
+	}
+	return r.configmapsManager, nil
 }
 
 func graphRootMounted() bool {

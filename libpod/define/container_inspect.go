@@ -75,6 +75,8 @@ type InspectContainerConfig struct {
 	StopTimeout uint `json:"StopTimeout"`
 	// Passwd determines whether or not podman can add entries to /etc/passwd and /etc/group
 	Passwd *bool `json:"Passwd,omitempty"`
+	// ConfigMaps are the configmaps mounted in the container
+	ConfigMaps []*InspectConfigMap `json:"ConfigMaps,omitempty"`
 }
 
 // InspectRestartPolicy holds information about the container's restart policy.
@@ -753,5 +755,19 @@ type InspectSecret struct {
 	// ID is the GID of the mounted secret file
 	GID uint32 `json:"GID"`
 	// ID is the ID of the mode of the mounted secret file
+	Mode uint32 `json:"Mode"`
+}
+
+// InspectConfigMap contains information on configmaps mounted inside the container
+type InspectConfigMap struct {
+	// Name is the name of the configmap
+	Name string `json:"Name"`
+	// ID is the ID of the secret
+	ID string `json:"ID"`
+	// ID is the UID of the mounted configmap file
+	UID uint32 `json:"UID"`
+	// ID is the GID of the mounted configmap file
+	GID uint32 `json:"GID"`
+	// ID is the ID of the mode of the mounted configmap file
 	Mode uint32 `json:"Mode"`
 }

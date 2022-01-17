@@ -11,13 +11,14 @@ require (
 	github.com/container-orchestrated-devices/container-device-interface v0.0.0-20220111162300-46367ec063fd
 	github.com/containernetworking/cni v1.0.1
 	github.com/containernetworking/plugins v1.0.1
-	github.com/containers/buildah v1.23.1-0.20220112160421-d744ebc4b1d5
-	github.com/containers/common v0.46.1-0.20220117145719-da777f8b15b1
+	github.com/containers/buildah v1.23.1
+	github.com/containers/common v0.46.1-0.20220119203335-0e7aca71d00a
 	github.com/containers/conmon v2.0.20+incompatible
 	github.com/containers/image/v5 v5.18.0
 	github.com/containers/ocicrypt v1.1.2
+	github.com/containers/podman/v3 v3.4.4
 	github.com/containers/psgo v1.7.1
-	github.com/containers/storage v1.37.1-0.20211213220314-73a749e4fec5
+	github.com/containers/storage v1.38.0
 	github.com/coreos/go-systemd/v22 v22.3.2
 	github.com/coreos/stream-metadata-go v0.0.0-20210225230131-70edb9eb47b3
 	github.com/cyphar/filepath-securejoin v0.2.3
@@ -30,6 +31,7 @@ require (
 	github.com/docker/go-units v0.4.0
 	github.com/dtylman/scp v0.0.0-20181017070807-f3000a34aef4
 	github.com/fsnotify/fsnotify v1.5.1
+	github.com/fsouza/go-dockerclient v1.7.7 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/godbus/dbus/v5 v5.0.6
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
@@ -66,7 +68,7 @@ require (
 	go.etcd.io/bbolt v1.3.6
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
 	golang.org/x/text v0.3.7
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b

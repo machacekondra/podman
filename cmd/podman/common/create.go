@@ -540,6 +540,14 @@ func DefineCreateFlags(cmd *cobra.Command, cf *entities.ContainerCreateOptions, 
 		)
 		_ = cmd.RegisterFlagCompletionFunc(secretFlagName, AutocompleteSecrets)
 
+		configmapFlagName := "configmap"
+		createFlags.StringArrayVar(
+			&cf.ConfigMaps,
+			configmapFlagName, []string{},
+			"Add ConfigMap to container",
+		)
+		_ = cmd.RegisterFlagCompletionFunc(configmapFlagName, AutocompleteConfigmaps)
+
 		shmSizeFlagName := "shm-size"
 		createFlags.String(
 			shmSizeFlagName, shmSize(),

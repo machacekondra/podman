@@ -9,6 +9,11 @@
 | [podman-attach(1)](https://podman.readthedocs.io/en/latest/markdown/podman-attach.1.html)                             | Attach to a running container                                              |
 | [podman-build(1)](https://podman.readthedocs.io/en/latest/markdown/podman-build.1.html)                               | Build a container image using a Containerfile                              |
 | [podman-commit(1)](https://podman.readthedocs.io/en/latest/markdown/podman-commit.1.html)                             | Create new image based on the changed container                            |
+| [podman-config(1)](https://podman.readthedocs.io/en/latest/markdown/podman-config.1.html)                             | Manage podman configmaps                                                   |
+| [podman-config-create(1)](https://podman.readthedocs.io/en/latest/markdown/podman-config-create.1.html)               | Create a new configmap                                                     |
+| [podman-config-inspect(1)](https://podman.readthedocs.io/en/latest/markdown/podman-config-inspect.1.html)             | Display detailed information on one or more configmaps                     |
+| [podman-config-ls(1)](https://podman.readthedocs.io/en/latest/markdown/podman-config-ls.1.html)                       | List all the available configmaps                                          |
+| [podman-config-rm(1)](https://podman.readthedocs.io/en/latest/markdown/podman-config-rm.1.html)                       | Remove one or more configmaps                                              |
 | [podman-container(1)](https://podman.readthedocs.io/en/latest/managecontainers.html)                                  | Manage Containers                                                          |
 | [podman-container-checkpoint(1)](https://podman.readthedocs.io/en/latest/markdown/podman-container-checkpoint.1.html) | Checkpoints one or more running containers                                 |
 | [podman-container-cleanup(1)](https://podman.readthedocs.io/en/latest/markdown/podman-container-cleanup.1.html)       | Cleanup the container's network and mountpoints                            |

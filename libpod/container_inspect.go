@@ -391,6 +391,16 @@ func (c *Container) generateInspectContainerConfig(spec *spec.Spec) *define.Insp
 		ctrConfig.Secrets = append(ctrConfig.Secrets, &newSec)
 	}
 
+	for _, cm := range c.config.ConfigMaps {
+		newCm := define.InspectConfigMap{}
+		newCm.Name = cm.Name
+		newCm.ID = cm.ID
+		newCm.UID = cm.UID
+		newCm.GID = cm.GID
+		newCm.Mode = cm.Mode
+		ctrConfig.ConfigMaps = append(ctrConfig.ConfigMaps, &newCm)
+	}
+
 	// Pad Umask to 4 characters
 	if len(c.config.Umask) < 4 {
 		pad := strings.Repeat("0", 4-len(c.config.Umask))

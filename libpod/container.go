@@ -13,6 +13,7 @@ import (
 	"github.com/containers/common/libnetwork/cni"
 	"github.com/containers/common/libnetwork/types"
 	"github.com/containers/common/pkg/config"
+	"github.com/containers/common/pkg/configmaps"
 	"github.com/containers/common/pkg/secrets"
 	"github.com/containers/image/v5/manifest"
 	"github.com/containers/podman/v4/libpod/define"
@@ -264,6 +265,20 @@ type ContainerImageVolume struct {
 type ContainerSecret struct {
 	// Secret is the secret
 	*secrets.Secret
+	// UID is the UID of the secret file
+	UID uint32
+	// GID is the GID of the secret file
+	GID uint32
+	// Mode is the mode of the secret file
+	Mode uint32
+	// Secret target inside container
+	Target string
+}
+
+// ContainerConfigMap is a secret that is mounted in a container
+type ContainerConfigMap struct {
+	// ConfigMap is the configmap
+	*configmaps.ConfigMap
 	// UID is the UID of the secret file
 	UID uint32
 	// GID is the GID of the secret file
@@ -1164,6 +1179,11 @@ func (c *Container) Umask() string {
 //Secrets return the secrets in the container
 func (c *Container) Secrets() []*ContainerSecret {
 	return c.config.Secrets
+}
+
+// ConfigMaps return the configmaps in the container
+func (c *Container) ConfigMaps() []*ContainerConfigMap {
+	return c.config.ConfigMaps
 }
 
 // Networks gets all the networks this container is connected to.

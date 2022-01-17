@@ -23,6 +23,8 @@ import (
 // Returns the created, container and any warnings resulting from creating the
 // container, or an error.
 func MakeContainer(ctx context.Context, rt *libpod.Runtime, s *specgen.SpecGenerator) (*spec.Spec, *specgen.SpecGenerator, []libpod.CtrCreateOption, error) {
+	logrus.Debugf("======Specge: %s", s.Secrets)
+	logrus.Debugf("======Specge: %s", s.ConfigMaps)
 	rtc, err := rt.GetConfigNoCopy()
 	if err != nil {
 		return nil, nil, nil, err
@@ -472,6 +474,28 @@ func createContainerOptions(ctx context.Context, rt *libpod.Runtime, s *specgen.
 
 	if len(s.EnvSecrets) != 0 {
 		options = append(options, libpod.WithEnvSecrets(s.EnvSecrets))
+	}
+
+	if len(s.ConfigMaps) != 0 {
+		manager, err := rt.ConfigMapsManager()
+		if err != nil {
+			return nil, err
+		}
+		var cms []*libpod.ContainerConfigMap
+		for _, c := range s.ConfigMaps {
+			cm, err := manager.Lookup(c.Source)
+			if err != nil {
+				return nil, err
+			}
+			cms = append(cms, &libpod.ContainerConfigMap{
+				ConfigMap: cm,
+				UID:       c.UID,
+				GID:       c.GID,
+				Mode:      c.Mode,
+				Target:    c.Target,
+			})
+		}
+		options = append(options, libpod.WithConfigMaps(cms))
 	}
 
 	if len(s.DependencyContainers) > 0 {

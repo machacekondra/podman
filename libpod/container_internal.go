@@ -2352,3 +2352,35 @@ func (c *Container) extractSecretToCtrStorage(secr *ContainerSecret) error {
 	}
 	return nil
 }
+
+// extractConfigMapToCtrStorage copies a cm's data from the configmap manager to the container's static dir
+func (c *Container) extractConfigMapToCtrStorage(cm *ContainerConfigMap) error {
+	manager, err := c.runtime.ConfigMapsManager()
+	if err != nil {
+		return err
+	}
+	_, data, err := manager.LookupConfigMapData(cm.Name)
+	if err != nil {
+		return err
+	}
+	cmFile := filepath.Join(c.config.ConfigMapsPath, cm.Name)
+
+	hostUID, hostGID, err := butil.GetHostIDs(util.IDtoolsToRuntimeSpec(c.config.IDMappings.UIDMap), util.IDtoolsToRuntimeSpec(c.config.IDMappings.GIDMap), cm.UID, cm.GID)
+	if err != nil {
+		return errors.Wrap(err, "unable to extract configmaps")
+	}
+	err = ioutil.WriteFile(cmFile, data, 0644)
+	if err != nil {
+		return errors.Wrapf(err, "unable to create %s", cmFile)
+	}
+	if err := os.Lchown(cmFile, int(hostUID), int(hostGID)); err != nil {
+		return err
+	}
+	if err := os.Chmod(cmFile, os.FileMode(cm.Mode)); err != nil {
+		return err
+	}
+	if err := label.Relabel(cmFile, c.config.MountLabel, false); err != nil {
+		return err
+	}
+	return nil
+}

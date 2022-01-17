@@ -444,6 +444,18 @@ func (r *Runtime) setupContainer(ctx context.Context, ctr *Container) (_ *Contai
 		}
 	}
 
+	ctr.config.ConfigMapsPath = filepath.Join(ctr.config.StaticDir, "configmaps")
+	err = os.MkdirAll(ctr.config.ConfigMapsPath, 0644)
+	if err != nil {
+		return nil, err
+	}
+	for _, cm := range ctr.config.ConfigMaps {
+		err = ctr.extractConfigMapToCtrStorage(cm)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if ctr.config.ConmonPidFile == "" {
 		ctr.config.ConmonPidFile = filepath.Join(ctr.state.RunDir, "conmon.pid")
 	}

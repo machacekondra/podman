@@ -236,6 +236,34 @@ func getSecrets(cmd *cobra.Command, toComplete string, cType completeType) ([]st
 	return suggestions, cobra.ShellCompDirectiveNoFileComp
 }
 
+func getConfigMaps(cmd *cobra.Command, toComplete string, cType completeType) ([]string, cobra.ShellCompDirective) {
+	suggestions := []string{}
+
+	engine, err := setupContainerEngine(cmd)
+	if err != nil {
+		cobra.CompErrorln(err.Error())
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	cms, err := engine.ConfigMapList(registry.GetContext(), entities.ConfigMapListRequest{})
+	if err != nil {
+		cobra.CompErrorln(err.Error())
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	for _, cm := range cms {
+		// works the same as in getNetworks
+		if ((len(toComplete) > 1 && cType == completeDefault) ||
+			cType == completeIDs) && strings.HasPrefix(cm.ID, toComplete) {
+			suggestions = append(suggestions, cm.ID[0:12])
+		}
+		// include name in suggestions
+		if cType != completeIDs && strings.HasPrefix(cm.Spec.Name, toComplete) {
+			suggestions = append(suggestions, cm.Spec.Name)
+		}
+	}
+	return suggestions, cobra.ShellCompDirectiveNoFileComp
+}
+
 func getRegistries() ([]string, cobra.ShellCompDirective) {
 	regs, err := sysregistriesv2.UnqualifiedSearchRegistries(nil)
 	if err != nil {
@@ -475,6 +503,21 @@ func AutocompleteSecrets(cmd *cobra.Command, args []string, toComplete string) (
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 	return getSecrets(cmd, toComplete, completeDefault)
+}
+
+// AutocompleteConfigmaps - Autocomplete configmaps.
+func AutocompleteConfigmaps(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if !validCurrentCmdLine(cmd, args, toComplete) {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	return getConfigMaps(cmd, toComplete, completeDefault)
+}
+
+func AutocompleteConfigMapCreate(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) == 1 {
+		return nil, cobra.ShellCompDirectiveDefault
+	}
+	return nil, cobra.ShellCompDirectiveNoFileComp
 }
 
 func AutocompleteSecretCreate(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {

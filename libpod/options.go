@@ -1659,6 +1659,17 @@ func WithUmask(umask string) CtrCreateOption {
 	}
 }
 
+// WithConfigMaps adds configmaps to the container
+func WithConfigMaps(containerCms []*ContainerConfigMap) CtrCreateOption {
+	return func(ctr *Container) error {
+		if ctr.valid {
+			return define.ErrCtrFinalized
+		}
+		ctr.config.ConfigMaps = containerCms
+		return nil
+	}
+}
+
 // WithSecrets adds secrets to the container
 func WithSecrets(containerSecrets []*ContainerSecret) CtrCreateOption {
 	return func(ctr *Container) error {

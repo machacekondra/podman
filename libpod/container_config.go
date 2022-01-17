@@ -165,6 +165,10 @@ type ContainerRootFSConfig struct {
 	Volatile bool `json:"volatile,omitempty"`
 	// Passwd allows to user to override podman's passwd/group file setup
 	Passwd *bool `json:"passwd,omitempty"`
+	// Secrets lists secrets to mount into the container
+	ConfigMaps []*ContainerConfigMap `json:"configmaps,omitempty"`
+	// SecretPath is the secrets location in storage
+	ConfigMapsPath string `json:"configmapsPath"`
 }
 
 // ContainerSecurityConfig is an embedded sub-config providing security configuration

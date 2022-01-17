@@ -683,6 +683,8 @@ func FillOutSpecGen(s *specgen.SpecGenerator, c *entities.ContainerCreateOptions
 		s.RestartPolicy = splitRestart[0]
 	}
 
+	s.ConfigMaps, err = parseConfigMaps(c.ConfigMaps)
+
 	s.Secrets, s.EnvSecrets, err = parseSecrets(c.Secrets)
 	if err != nil {
 		return err
@@ -848,6 +850,98 @@ func parseThrottleIOPsDevices(iopsDevices []string) (map[string]specs.LinuxThrot
 		td[split[0]] = specs.LinuxThrottleDevice{Rate: rate}
 	}
 	return td, nil
+}
+
+func parseConfigMaps(cms []string) ([]specgen.ConfigMap, error) {
+	configmapParseError := errors.New("error parsing configmap")
+	var mount []specgen.ConfigMap
+	for _, val := range cms {
+		source := ""
+		secretType := ""
+		target := ""
+		var uid, gid uint32
+		// default mode 444 octal = 292 decimal
+		var mode uint32 = 292
+		split := strings.Split(val, ",")
+
+		// --configmap mycm
+		if len(split) == 1 {
+			mountConfigMap := specgen.ConfigMap{
+				Source: val,
+				Target: target,
+				UID:    uid,
+				GID:    gid,
+				Mode:   mode,
+			}
+			mount = append(mount, mountConfigMap)
+			continue
+		}
+		// --configmap mycm,opt=opt
+		if !strings.Contains(split[0], "=") {
+			source = split[0]
+			split = split[1:]
+		}
+
+		for _, val := range split {
+			kv := strings.SplitN(val, "=", 2)
+			if len(kv) < 2 {
+				return nil, errors.Wrapf(configmapParseError, "option %s must be in form option=value", val)
+			}
+			switch kv[0] {
+			case "source":
+				source = kv[1]
+			case "type":
+				if secretType != "" {
+					return nil, errors.Wrap(configmapParseError, "cannot set more tha one secret type")
+				}
+				if kv[1] != "mount" && kv[1] != "env" {
+					return nil, errors.Wrapf(configmapParseError, "type %s is invalid", kv[1])
+				}
+				secretType = kv[1]
+			case "target":
+				target = kv[1]
+			case "mode":
+				mode64, err := strconv.ParseUint(kv[1], 8, 32)
+				if err != nil {
+					return nil, errors.Wrapf(configmapParseError, "mode %s invalid", kv[1])
+				}
+				mode = uint32(mode64)
+			case "uid", "UID":
+				uid64, err := strconv.ParseUint(kv[1], 10, 32)
+				if err != nil {
+					return nil, errors.Wrapf(configmapParseError, "UID %s invalid", kv[1])
+				}
+				uid = uint32(uid64)
+			case "gid", "GID":
+				gid64, err := strconv.ParseUint(kv[1], 10, 32)
+				if err != nil {
+					return nil, errors.Wrapf(configmapParseError, "GID %s invalid", kv[1])
+				}
+				gid = uint32(gid64)
+
+			default:
+				return nil, errors.Wrapf(configmapParseError, "option %s invalid", val)
+			}
+		}
+
+		if secretType == "" {
+			secretType = "mount"
+		}
+		if source == "" {
+			return nil, errors.Wrapf(configmapParseError, "no source found %s", val)
+		}
+		if secretType == "mount" {
+			mountConfigMap := specgen.ConfigMap{
+				Source: source,
+				Target: target,
+				UID:    uid,
+				GID:    gid,
+				Mode:   mode,
+			}
+			mount = append(mount, mountConfigMap)
+		}
+	}
+	return mount, nil
 }
 
 func parseSecrets(secrets []string) ([]specgen.Secret, map[string]string, error) {

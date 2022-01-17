@@ -151,6 +151,7 @@ func newServer(runtime *libpod.Runtime, listener *net.Listener, opts entities.Se
 		server.registerPluginsHandlers,
 		server.registerPodsHandlers,
 		server.registerSecretHandlers,
+		server.registerConfigMapHandlers,
 		server.registerSwaggerHandlers,
 		server.registerSwarmHandlers,
 		server.registerSystemHandlers,
